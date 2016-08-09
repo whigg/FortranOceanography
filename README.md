@@ -5,4 +5,4 @@ Utilities for oceanography
 To compile:
 ```bash
  gfortran -I/usr/include convert_SMAP_v1_SSS_L3_netcdf.f90 -L/usr/lib/ -lnetcdf -lnetcdff -o convert_SMAP_v1_SSS_L3_netcdf.a
-´´´
+```

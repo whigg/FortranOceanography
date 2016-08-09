@@ -16,9 +16,7 @@ program convert_SMAP_v1_SSS_L3_netcdf
   use netcdf
   implicit none
   
-  ! Input and output files: here hard-coded, but would be better to have them 
-  ! as arguments of the fortran executables
- 
+  ! Input and output files 
   integer             :: narg,cptArg               ! #of arg & counter of arg
   integer             :: dotpos                    ! position of the last dot in the file name 
   character(len=100)  :: inputfile, outputfile     ! input and output file names

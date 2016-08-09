@@ -1,10 +1,13 @@
 ! FORTRAN 90 reader for RSS SMAP Salinity Version 1.0 (BETA) Level 3 files
 ! to netCDF (CF-compliant) format.
 !
+! The code is based on the example provided by UNIDATA:
+! http://www.unidata.ucar.edu/software/netcdf/examples/programs/simple_xy_wr.f90
 !
 ! Compilation: you need to have the netCDF library installed
 !
 !  gfortran -I/usr/include convert_SMAP_v1_SSS_L3_netcdf.f90 -L/usr/lib/  -lnetcdf -lnetcdff -o convert_SMAP_v1_SSS_L3_netcdf.a
+!
 ! ICTS SOCIB, 2016
 !
 ! -----------------------------------------------------------------------------------------
@@ -13,9 +16,12 @@ program convert_SMAP_v1_SSS_L3_netcdf
   use netcdf
   implicit none
   
-
+  ! Input and output files: here hard-coded, but would be better to have them 
+  ! as arguments of the fortran executables
   character(len=250)                  ::  filename='sss_smap_8day_running_2016_182_v1.0.dat' ! to be specified by user
-  character(len=50)                   ::  outfile='sss_smap_8day_running_2016_182_v1.0.nc'
+  character(len=50)                   ::  outfile='sss_smap_8day_running_2016_182_v1.0.nc'   ! also to be modified by user
+  
+  ! Parameters for the grid and dimensions to be read
   integer(4), parameter               ::  mlon=1440, mlat=720, iu=3
   real(4), dimension(mlon,mlat)       ::  map_sss
   integer(4), dimension(mlon,mlat)    ::  map_num 

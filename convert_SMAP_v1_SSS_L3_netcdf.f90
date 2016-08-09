@@ -18,8 +18,11 @@ program convert_SMAP_v1_SSS_L3_netcdf
   
   ! Input and output files: here hard-coded, but would be better to have them 
   ! as arguments of the fortran executables
-  character(len=250)                  ::  filename='sss_smap_8day_running_2016_182_v1.0.dat' ! to be specified by user
-  character(len=50)                   ::  outfile='sss_smap_8day_running_2016_182_v1.0.nc'   ! also to be modified by user
+ 
+  integer             :: narg,cptArg               ! #of arg & counter of arg
+  integer             :: dotpos                    ! position of the last dot in the file name 
+  character(len=100)  :: inputfile, outputfile     ! input and output file names
+  character(len=2)    :: new_ext="nc"              ! new file extension
   
   ! Parameters for the grid and dimensions to be read
   integer(4), parameter               ::  mlon=1440, mlat=720, iu=3
@@ -41,7 +44,36 @@ program convert_SMAP_v1_SSS_L3_netcdf
   character(len=50), parameter        ::  STANDARD_NAME = 'standard_name'
   character(len=50), parameter        ::  LONG_NAME = 'long_name'
   character(len=50), parameter        ::  UNITS = 'units'
- 
+  
+  !Check if any arguments are found
+  narg=command_argument_count()
+  !write(*,*) 'Working with ', narg, ' arguments'
+
+  !Loop over the arguments
+  if(narg == 1) then
+    call get_command_argument(1, inputfile)
+    dotpos = scan(trim(inputfile),".", BACK= .true.)
+    if ( dotpos > 0 ) then
+      outputfile = inputfile(1:dotpos)//new_ext
+      write(*,*) 'Input file: ', inputfile
+      write(*,*) 'Output file: ', outputfile
+    else
+      write(*, *) 'Error: Not a correct input file'
+      stop
+    end if
+  else if (narg == 2) then
+    call get_command_argument(1, inputfile)
+    call get_command_argument(2, outputfile)
+    write(*,*) 'Input file: ', inputfile
+    write(*,*) 'Output file: ', outputfile
+  else if (narg > 2) then
+    write(*,*) 'Error: Too many arguments'
+    stop
+  else
+    write(*, *) 'Error: No input file specified'
+    stop
+  end if
+
   ! Create longitude and latitude vectors
   do ilon=1,mlon
     lon(ilon)=0.0+(ilon-1)*360./mlon
@@ -52,13 +84,13 @@ program convert_SMAP_v1_SSS_L3_netcdf
   end do 
 
   ! Read the fortran binary file
-  open(unit=iu,form='unformatted',file=filename,action='read',access='stream')
+  open(unit=iu,form='unformatted',file=inputfile,action='read',access='stream')
   read(iu) map_num
   read(iu) map_sss
   close(iu)
 
   ! Create the netCDf file
-  call check( nf90_create(outfile, NF90_CLOBBER, ncid) )
+  call check( nf90_create(outputfile, NF90_CLOBBER, ncid) )
 
   ! Define the dimensions. NetCDF will hand back an ID for each. 
   call check( nf90_def_dim(ncid, "lat", mlat, lat_dimid) )

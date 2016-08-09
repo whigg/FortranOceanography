@@ -1,2 +1,2 @@
-# FortranOceanograohy
+# FortranOceanography
 Utilities for oceanography
